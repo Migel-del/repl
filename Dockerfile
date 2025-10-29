@@ -1,13 +1,13 @@
-FROM nginx:latest
+FROM nginx:alpine
 
-# Удаляем стандартную конфигурацию
-RUN rm /etc/nginx/conf.d/default.conf
+# Удаляем дефолтные конфиги
+RUN rm -rf /etc/nginx/conf.d/*
 
-# Копируем свои конфиги
-COPY nginx2.conf /etc/nginx/nginx.conf
-COPY proxy.conf /etc/nginx/conf.d/proxy.conf
+# Копируем наш конфиг
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Контейнер слушает 8080
-EXPOSE 8080
+# Добавляем healthcheck (опционально)
+HEALTHCHECK CMD wget -qO- http://127.0.0.1:${PORT:-8080}/ || exit 1
 
+# Основной процесс — foreground (важно для Railway)
 CMD ["nginx", "-g", "daemon off;"]
