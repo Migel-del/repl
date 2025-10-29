@@ -1,14 +1,10 @@
-# Используем лёгкий официальный образ
-FROM nginx:alpine
+FROM nginx:latest
 
-# Удаляем стандартные HTTP-конфиги nginx
-RUN rm -rf /etc/nginx/conf.d/*
+# Удаляем дефолтный конфиг
+RUN rm /etc/nginx/conf.d/default.conf
 
-# Копируем наш TCP-конфиг (stream proxy)
-COPY nginx.conf /etc/nginx/nginx.conf
+# Копируем новые конфиги
+COPY nginx.conf /etc/nginx/conf.d/nginx.conf
+COPY nginx2.conf /etc/nginx/nginx.conf
 
-# Указываем порт, который слушает nginx внутри контейнера
 EXPOSE 8080
-
-# Запускаем nginx на переднем плане (требуется Railway)
-CMD ["nginx", "-g", "daemon off;"]
